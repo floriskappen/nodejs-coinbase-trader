@@ -2,7 +2,9 @@
 const program = require('commander')
 const Historical = require('./src/historical')
 const Backtester = require('./src/backtester')
+const Trader = require('./src/trader')
 const config = require('./configuration')
+const Ticker = require('./src/models/ticker')
 
 const now = new Date()
 const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1e3)
@@ -27,20 +29,34 @@ program
     )
     .option('-e, --end [end]', 'End time in Unix seconds', toDate, now)
     .option('-t, --strategy <strategy>', 'Strategy Type', 'macd')
+    .option('-l, --live', 'Run live')
     .parse(process.argv)
 
 // Configurations
 const main = async function() {
-    const { interval, product, start, end, strategy } = program
-    const tester = new Backtester({
-        start,
-        end,
-        product,
-        interval,
-        strategyType: strategy
-    })
+    const { interval, product, start, end, strategy, live } = program
 
-    await tester.start()
+    if (live) {
+        const trader = new Trader({
+            start,
+            end,
+            product,
+            interval,
+            strategyType: strategy
+        })
+
+        await trader.start()
+    } else {
+        const tester = new Backtester({
+            start,
+            end,
+            product,
+            interval,
+            strategyType: strategy
+        })
+
+        await tester.start()
+    }
 }
 
 main()
