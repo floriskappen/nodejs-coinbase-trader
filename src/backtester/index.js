@@ -1,5 +1,4 @@
 const randomstring = require('randomstring')
-const colors = require('colors')
 const Runner = require('../runner')
 
 class Backtester extends Runner {
@@ -17,20 +16,8 @@ class Backtester extends Runner {
                 })
             )
 
-            const positions = this.strategy.getPositions()
-            positions.forEach(p => {
-                if (p) {
-                    p.print()
-                }
-            })
-
-            const total = positions.reduce((r, p) => {
-                return r + p.profit()
-            }, 0)
-
-            const prof = `${total}`
-            const colored = total > 0 ? colors.green(prof) : colors.red(prof)
-            console.log(`Total: ${colored}`)
+            this.printPositions()
+            this.printProfit()
         } catch (error) {
             console.log(error)
         }

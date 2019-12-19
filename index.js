@@ -29,20 +29,33 @@ program
     )
     .option('-e, --end [end]', 'End time in Unix seconds', toDate, now)
     .option('-t, --strategy <strategy>', 'Strategy Type', 'macd')
+    .option('-r, --type <type>', 'Run type')
+    .option('-f, --funds <funds>', 'Amount of funds to use', parseInt)
     .option('-l, --live', 'Run live')
     .parse(process.argv)
 
 // Configurations
 const main = async function() {
-    const { interval, product, start, end, strategy, live } = program
+    const {
+        interval,
+        product,
+        start,
+        end,
+        strategy,
+        live,
+        funds,
+        type
+    } = program
 
-    if (live) {
+    if (type === 'trader') {
         const trader = new Trader({
             start,
             end,
             product,
             interval,
-            strategyType: strategy
+            strategyType: strategy,
+            live,
+            funds
         })
 
         await trader.start()
